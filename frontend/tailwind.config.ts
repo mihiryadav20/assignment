@@ -1,13 +1,19 @@
 import forms from '@tailwindcss/forms';
 import typography from '@tailwindcss/typography';
+import daisyui from 'daisyui';
 import type { Config } from 'tailwindcss';
 
-export default {
-	content: ['./src/**/*.{html,js,svelte,ts}'],
+/** @type {import('tailwindcss').Config} */
+const config = {
+  content: ['./src/**/*.{html,js,svelte,ts}'],
+  theme: {
+    extend: {},
+  },
+  plugins: [typography, forms, daisyui],
+  // DaisyUI configuration
+  daisyui: {
+    themes: ["light", "cyberpunk"],
+  },
+};
 
-	theme: {
-		extend: {}
-	},
-
-	plugins: [typography, forms]
-} satisfies Config;
+export default config;
