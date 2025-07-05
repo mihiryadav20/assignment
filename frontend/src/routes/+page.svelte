@@ -1,17 +1,19 @@
+<script>
+  import { goto } from '$app/navigation';
+</script>
+
 <div
   class="hero min-h-screen"
-  style="background-image: url(https://cdn.midjourney.com/b7554f2a-10bd-48e4-8b34-05a0df028560/0_0.png);"
+  style="background-image: url(https://cdn.midjourney.com/5056374d-8788-40fa-8747-95f988be43bb/0_3.png);"
 >
   <div class="hero-overlay"></div>
   <div class="hero-content text-neutral-content text-center">
     <div class="max-w-md">
-      <h1 class="mb-5 text-5xl font-bold mt-7">Let's start the mini SaaS</h1>
+      <h1 class="mb-5 text-5xl font-bold">Ciao!</h1>
       <p class="mb-5">
-        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
-        quasi. In deleniti eaque aut repudiandae et a id nisi.
+        Welcome to our mini SaaS platform. Here you can login as a staff and enter an issue.
       </p>
-      <button class="btn btn-primary p-4 mx-4">Login as a Staff</button>
-      <button class="btn btn-primary p-4 mx-4">Enter an issue</button>
+      <button on:click={() => goto('/login')} class="btn btn-primary p-4 mx-4">Get started</button>
     </div>
   </div>
 </div>
