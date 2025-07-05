@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import login
 from django.contrib.auth.models import User
+from django.db.models import Count
 
 from rest_framework import generics, permissions, status, viewsets, parsers
 from rest_framework.authtoken.models import Token
@@ -183,3 +184,51 @@ class IssueViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         serializer.save(created_by=self.request.user)
+
+
+class IssueStatsView(APIView):
+    """View for retrieving issue statistics by status and severity"""
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get(self, request, *args, **kwargs):
+        # Get the user's queryset based on their role
+        user = request.user
+        
+        if hasattr(user, 'profile') and user.profile.is_reporter():
+            # Reporters can only see stats for their own issues
+            queryset = Issue.objects.filter(created_by=user)
+        else:
+            # Maintainers and admins can see stats for all issues
+            queryset = Issue.objects.all()
+        
+        # Initialize dictionaries with all possible status and severity values set to 0
+        status_stats = {
+            Issue.STATUS_OPEN: 0,
+            Issue.STATUS_TRIAGED: 0,
+            Issue.STATUS_IN_PROGRESS: 0,
+            Issue.STATUS_DONE: 0
+        }
+        
+        severity_stats = {
+            Issue.SEVERITY_LOW: 0,
+            Issue.SEVERITY_MEDIUM: 0,
+            Issue.SEVERITY_HIGH: 0,
+            Issue.SEVERITY_CRITICAL: 0
+        }
+        
+        # Get counts by status
+        status_counts = queryset.values('status').annotate(count=Count('status'))
+        for item in status_counts:
+            status_stats[item['status']] = item['count']
+        
+        # Get counts by severity
+        severity_counts = queryset.values('severity').annotate(count=Count('severity'))
+        for item in severity_counts:
+            severity_stats[item['severity']] = item['count']
+        
+        # Return the statistics
+        return Response({
+            'status_counts': status_stats,
+            'severity_counts': severity_stats,
+            'total_issues': queryset.count()
+        })

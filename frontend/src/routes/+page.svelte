@@ -4,7 +4,7 @@
 
 <div
   class="hero min-h-screen"
-  style="background-image: url(https://cdn.midjourney.com/5056374d-8788-40fa-8747-95f988be43bb/0_3.png);"
+  style="background-image: url(https://images.pexels.com/photos/176851/pexels-photo-176851.jpeg);"
 >
   <div class="hero-overlay"></div>
   <div class="hero-content text-neutral-content text-center">

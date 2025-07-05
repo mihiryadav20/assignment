@@ -24,6 +24,9 @@ urlpatterns = [
     # Endpoint for admins/maintainers to update issue status and severity
     path('issues/<uuid:issue_id>/update-status/', views.UpdateIssueStatusView.as_view(), name='update-issue-status'),
     
+    # Endpoint for issue statistics by status and severity
+    path('issues/stats/', views.IssueStatsView.as_view(), name='issue-stats'),
+    
     # Include router URLs
     path('', include(router.urls)),
 ]
