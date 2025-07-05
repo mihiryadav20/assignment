@@ -182,8 +182,10 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 ]
 
 # Additional social auth settings
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/api/auth/user/'
-SOCIAL_AUTH_LOGIN_ERROR_URL = '/login-error/'
+# Frontend URL where users should be redirected after successful OAuth
+FRONTEND_URL = 'http://localhost:5173'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = f'{FRONTEND_URL}/reporter'
+SOCIAL_AUTH_LOGIN_ERROR_URL = f'{FRONTEND_URL}/login'
 SOCIAL_AUTH_REDIRECT_IS_HTTPS = False  # Set to True in production
 SOCIAL_AUTH_GOOGLE_OAUTH2_AUTH_EXTRA_ARGUMENTS = {'access_type': 'offline'}
 SOCIAL_AUTH_STRATEGY = 'social_django.strategy.DjangoStrategy'
@@ -197,7 +199,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
     'social_core.pipeline.social_auth.auth_allowed',
-    'social_core.pipeline.social_auth.social_user',
+    # Use our custom function instead of social_user
+    'mainapp.pipeline.social_user_with_email_fallback',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',
     'social_core.pipeline.social_auth.associate_user',
