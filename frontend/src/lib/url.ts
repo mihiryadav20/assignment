@@ -7,5 +7,6 @@ export const ApiEndpoints = {
     login: '/api/auth/login/',
     user: '/api/auth/user/'
   },
+  issues: '/issues/',
   // Add more endpoints here as needed
 };
