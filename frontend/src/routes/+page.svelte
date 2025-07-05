@@ -13,16 +13,15 @@
       <p class="mb-5">
         Welcome to our mini SaaS platform. Here you can login as a staff and enter an issue.
       </p>
-      <button on:click={() => goto('/login')} class="btn btn-primary p-4 mx-4">Get started</button>
+      <button on:click={() => goto('/login')} class="btn btn-primary p-4 mx-4 rounded-lg">Get started</button>
     </div>
   </div>
   
   <!-- Staff login link in bottom right -->
   <div class="fixed bottom-4 right-4">
-    <a href="/login" class="btn btn-ghost">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-      </svg>
+    <a href="/login" class="">
+      
+        
       Login as Staff
     </a>
   </div>
