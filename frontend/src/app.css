@@ -1,6 +1,6 @@
 @import "tailwindcss/preflight.css";
 @import "tailwindcss/utilities.css";@import "tailwindcss";
 @plugin "daisyui" {
-    themes: black --default, cyberpunk --prefersdark;
-    themes: black --default;
+    themes: dim --default, cyberpunk --prefersdark;
+    themes: dim --default;
    }

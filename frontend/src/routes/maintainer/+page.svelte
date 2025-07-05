@@ -169,7 +169,7 @@
 </script>
 
 <div class="min-h-screen bg-base-200 p-4">
-  <div class="navbar bg-base-100 rounded-lg shadow-md mb-6">
+  <div class="navbar  mb-6">
     <div class="flex-1">
       <h1 class="text-xl font-bold">Maintainer Dashboard</h1>
     </div>

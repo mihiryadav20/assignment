@@ -14,9 +14,13 @@ urlpatterns = [
         path('login/', views.LoginView.as_view(), name='login'),
         path('user/', views.UserDetailView.as_view(), name='user-detail'),
         
-        # Google OAuth callback for reporters
+        # Google OAuth endpoints
+        path('url/', views.get_auth_url, name='auth-url'),
         path('complete/<backend>/', views.google_auth, name='google-auth-complete'),
     ])),
+    
+    # User info endpoint
+    path('api/user/', views.get_user_info, name='user-info'),
     
     # Dedicated endpoint for creating issues with file attachments
     path('issues/create/', views.CreateIssueView.as_view(), name='create-issue'),
