@@ -15,12 +15,13 @@
   let isUpdating = false;
   let activeIssue: { id: string, field: string } | null = null;
   
+  
   // Filtering
   let statusFilter = "all";
   let severityFilter = "all";
   let searchQuery = "";
   
-  const statusOptions = ["all", "OPEN", "TRIAGED", "IN_PROGRESS", "RESOLVED", "CLOSED"];
+  const statusOptions = ["all", "OPEN", "TRIAGED", "IN_PROGRESS", "DONE"];
   const severityOptions = ["all", "LOW", "MEDIUM", "HIGH", "CRITICAL"];
 
   onMount(async () => {
@@ -36,7 +37,7 @@
       // Store user data in localStorage for quick access
       localStorage.setItem('userData', JSON.stringify(user));
       
-      // After authentication succeeds, load issues
+      // After authentication succeeds, load data
       await loadIssues();
     } catch (error: unknown) {
       console.error('Authentication error:', error);
@@ -95,6 +96,7 @@
     }
   }
   
+  
   function handleLogout() {
     logout();
     goto('/login');
@@ -142,10 +144,8 @@
         return 'badge-info';
       case 'IN_PROGRESS':
         return 'badge-warning';
-      case 'RESOLVED':
+      case 'DONE':
         return 'badge-success';
-      case 'CLOSED':
-        return 'badge-neutral';
       default:
         return 'badge-ghost';
     }
@@ -197,35 +197,11 @@
     <div class="card-body">
       <div class="flex justify-between items-start">
         <div>
-          <h2 class="card-title text-2xl">Welcome, {user.first_name || user.username || 'User'}</h2>
+          <h2 class="card-title text-2xl">Welcome, {(user.first_name && user.last_name) ? `${user.first_name} ${user.last_name}` : user.first_name || user.username || 'User'}</h2>
           <p class="text-gray-500">Here's your account information</p>
         </div>
         <div class="badge badge-lg" class:badge-primary={user.role === 'Admin'} class:badge-secondary={user.role === 'Staff'}>
           {user.role || (user.is_superuser ? 'Admin' : user.is_staff ? 'Staff' : 'User')}
-        </div>
-      </div>
-      <div class="divider my-2"></div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-        <div>
-          <div class="text-sm text-gray-500">Email</div>
-          <div class="font-medium">{user.email || 'N/A'}</div>
-        </div>
-        <div>
-          <div class="text-sm text-gray-500">User ID</div>
-          <div class="font-mono">{user.id || 'N/A'}</div>
-        </div>
-        <div>
-          <div class="text-sm text-gray-500">Full Name</div>
-          <div class="font-medium">
-            {user.first_name || user.last_name 
-              ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-              : 'N/A'
-            }
-          </div>
-        </div>
-        <div>
-          <div class="text-sm text-gray-500">Username</div>
-          <div class="font-medium">{user.username || 'N/A'}</div>
         </div>
       </div>
     </div>
@@ -235,7 +211,12 @@
 <!-- Issue Management Section -->
 {#if !isLoading && !errorMessage}
   <div class="mb-6">
-    <h1 class="text-3xl font-bold mb-4">Issue Management</h1>
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-3xl font-bold">Issue Management</h1>
+
+    </div>
+    
+
     
     <div class="flex flex-col md:flex-row gap-4 mb-4">
       <!-- Search bar -->
@@ -347,8 +328,7 @@
                             {status === 'OPEN' ? 'Open' : 
                              status === 'TRIAGED' ? 'Triaged' : 
                              status === 'IN_PROGRESS' ? 'In Progress' : 
-                             status === 'RESOLVED' ? 'Resolved' : 
-                             status === 'CLOSED' ? 'Closed' : status}
+                             status === 'DONE' ? 'Done' : status}
                           </button>
                         </li>
                       {/if}
