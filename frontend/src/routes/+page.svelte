@@ -13,7 +13,7 @@
       <p class="mb-5">
         Welcome to our mini SaaS platform. Here you can login as a staff and enter an issue.
       </p>
-      <button on:click={() => goto('/login')} class="btn btn-primary p-4 mx-4 rounded-lg">Get started</button>
+      <button on:click={() => goto('/oauth')} class="btn btn-primary p-4 mx-4 rounded-lg">Get started</button>
     </div>
   </div>
   
