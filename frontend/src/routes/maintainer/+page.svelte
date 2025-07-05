@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
-  import { getCurrentUser, logout, getIssues } from '$lib/api';
+  import { getCurrentUser, logout, getIssues, updateIssue } from '$lib/api';
   import type { User } from '$lib/models';
   import type { Issue } from '$lib/api/issues';
   
@@ -11,6 +11,9 @@
   let isLoadingIssues = false;
   let errorMessage = "";
   let issuesError = "";
+  let updateError = "";
+  let isUpdating = false;
+  let activeIssue: { id: string, field: string } | null = null;
   
   // Filtering
   let statusFilter = "all";
@@ -56,6 +59,39 @@
       issuesError = error instanceof Error ? error.message : 'Failed to load issues';
     } finally {
       isLoadingIssues = false;
+    }
+  }
+  
+  // Handle updating issue status or severity
+  async function handleUpdateIssue(issueId: string, field: 'status' | 'severity', value: string) {
+    isUpdating = true;
+    updateError = "";
+    activeIssue = { id: issueId, field };
+    
+    try {
+      // Create update payload with only the field being updated
+      const updateData = field === 'status' 
+        ? { status: value } 
+        : { severity: value };
+      
+      // Call API to update the issue
+      await updateIssue(issueId, updateData);
+      
+      // Refresh issues list to get updated data
+      await loadIssues();
+      
+      // Show success message (optional)
+      const toast = document.getElementById('update-toast');
+      if (toast) {
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 3000);
+      }
+    } catch (error: unknown) {
+      console.error(`Error updating issue ${field}:`, error);
+      updateError = error instanceof Error ? error.message : `Failed to update issue ${field}`;
+    } finally {
+      isUpdating = false;
+      activeIssue = null;
     }
   }
   
@@ -292,10 +328,61 @@
                 <div class="text-sm opacity-50 truncate max-w-xs">{issue.description}</div>
               </td>
               <td>
-                <div class="badge {getStatusBadgeClass(issue.status)}">{issue.status_display}</div>
+                <div class="dropdown dropdown-hover">
+                  <button class="badge {getStatusBadgeClass(issue.status)} cursor-pointer border-0">
+                    {isUpdating && activeIssue?.id === issue.id && activeIssue?.field === 'status' 
+                      ? 'Updating...' 
+                      : issue.status_display}
+                  </button>
+                  <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    {#each statusOptions.filter(s => s !== 'all') as status}
+                      {#if status !== issue.status}
+                        <li>
+                          <button 
+                            on:click={() => handleUpdateIssue(issue.id, 'status', status)}
+                            class="text-sm py-1"
+                            disabled={isUpdating}
+                          >
+                            <span class="badge badge-sm {getStatusBadgeClass(status)} mr-2"></span>
+                            {status === 'OPEN' ? 'Open' : 
+                             status === 'TRIAGED' ? 'Triaged' : 
+                             status === 'IN_PROGRESS' ? 'In Progress' : 
+                             status === 'RESOLVED' ? 'Resolved' : 
+                             status === 'CLOSED' ? 'Closed' : status}
+                          </button>
+                        </li>
+                      {/if}
+                    {/each}
+                  </ul>
+                </div>
               </td>
               <td>
-                <div class="badge {getSeverityBadgeClass(issue.severity)}">{issue.severity_display}</div>
+                <div class="dropdown dropdown-hover">
+                  <button class="badge {getSeverityBadgeClass(issue.severity)} cursor-pointer border-0">
+                    {isUpdating && activeIssue?.id === issue.id && activeIssue?.field === 'severity' 
+                      ? 'Updating...' 
+                      : issue.severity_display}
+                  </button>
+                  <ul class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52">
+                    {#each severityOptions.filter(s => s !== 'all') as severity}
+                      {#if severity !== issue.severity}
+                        <li>
+                          <button 
+                            on:click={() => handleUpdateIssue(issue.id, 'severity', severity)}
+                            class="text-sm py-1"
+                            disabled={isUpdating}
+                          >
+                            <span class="badge badge-sm {getSeverityBadgeClass(severity)} mr-2"></span>
+                            {severity === 'LOW' ? 'Low' : 
+                             severity === 'MEDIUM' ? 'Medium' : 
+                             severity === 'HIGH' ? 'High' : 
+                             severity === 'CRITICAL' ? 'Critical' : severity}
+                          </button>
+                        </li>
+                      {/if}
+                    {/each}
+                  </ul>
+                </div>
               </td>
               <td>
                 {`${issue.created_by.first_name} ${issue.created_by.last_name}` || issue.created_by.email || 'Anonymous'}
@@ -319,5 +406,24 @@
       </tbody>
     </table>
   </div>
+{/if}
+
+<!-- Toast notification for successful updates -->
+<div id="update-toast" class="toast toast-top toast-end hidden">
+  <div class="alert alert-success">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <span>Issue updated successfully!</span>
+  </div>
+</div>
+
+<!-- Error toast for update failures -->
+{#if updateError}
+<div class="toast toast-top toast-end">
+  <div class="alert alert-error">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+    <span>{updateError}</span>
+    <button class="btn btn-sm" on:click={() => updateError = ""}>Dismiss</button>
+  </div>
+</div>
 {/if}
 </div>

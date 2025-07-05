@@ -35,7 +35,7 @@ export async function getIssues(): Promise<Issue[]> {
 /**
  * Fetch a specific issue by ID
  */
-export async function getIssueById(id: number): Promise<Issue> {
+export async function getIssueById(id: string): Promise<Issue> {
   return apiFetch<Issue>(`${ApiEndpoints.issues}${id}/`);
 }
 
@@ -52,7 +52,7 @@ export async function createIssue(issue: Omit<Issue, 'id' | 'created_at' | 'upda
 /**
  * Update an existing issue
  */
-export async function updateIssue(id: number, issue: Partial<Issue>): Promise<Issue> {
+export async function updateIssue(id: string, issue: Partial<Issue>): Promise<Issue> {
   return apiFetch<Issue>(`${ApiEndpoints.issues}${id}/`, {
     method: 'PATCH',
     body: JSON.stringify(issue)
@@ -62,7 +62,7 @@ export async function updateIssue(id: number, issue: Partial<Issue>): Promise<Is
 /**
  * Delete an issue
  */
-export async function deleteIssue(id: number): Promise<void> {
+export async function deleteIssue(id: string): Promise<void> {
   return apiFetch<void>(`${ApiEndpoints.issues}${id}/`, {
     method: 'DELETE'
   });
