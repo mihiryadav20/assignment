@@ -198,7 +198,7 @@
       <div class="flex justify-between items-start">
         <div>
           <h2 class="card-title text-2xl">Welcome, {(user.first_name && user.last_name) ? `${user.first_name} ${user.last_name}` : user.first_name || user.username || 'User'}</h2>
-          <p class="text-gray-500">Here's your account information</p>
+          <p class="text-gray-500">You can manage issues here, change statuses, severity and view statistics</p>
         </div>
         <div class="badge badge-lg" class:badge-primary={user.role === 'Admin'} class:badge-secondary={user.role === 'Staff'}>
           {user.role || (user.is_superuser ? 'Admin' : user.is_staff ? 'Staff' : 'User')}
@@ -213,7 +213,7 @@
   <div class="mb-6">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold">Issue Management</h1>
-
+      <a href="maintainer/charts" class="text-blue-500 hover:underline ml-4">View Stats</a>
     </div>
     
 
@@ -249,11 +249,6 @@
         </select>
       </div>
       
-      <!-- Create new issue button -->
-      <button class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
-        New Issue
-      </button>
     </div>
     
     <!-- Issues count -->
@@ -303,7 +298,7 @@
             <tr class="hover">
               <td>
                 <div class="font-medium">{issue.title}</div>
-                <div class="text-sm opacity-50 truncate max-w-xs">{issue.description}</div>
+                <div class="text-sm opacity-50">{issue.description}</div>
               </td>
               <td>
                 <div class="dropdown dropdown-hover">

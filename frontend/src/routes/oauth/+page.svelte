@@ -54,7 +54,7 @@
 <div class="min-h-screen flex items-center justify-center bg-base-200">
   <div class="card w-96 bg-base-100 shadow-xl">
     <div class="card-body">
-      <h2 class="card-title text-2xl font-bold mb-4">Authentication</h2>
+      <h2 class="card-title text-xl font-bold mb-4">Authentication for reporting an issue</h2>
       
       {#if isLoading}
         <div class="flex flex-col items-center justify-center py-8">
