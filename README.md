@@ -34,7 +34,7 @@ A full-stack application with SvelteKit frontend and Django backend.
    - Frontend: http://localhost:5173
    - Backend: http://localhost:8000
 
-## ⚠️ Key Remaining Tasks
+## Key Remaining Tasks
 
 1. **Background workers**
 2. **Bonuses(UI toggle and Deployment)** 
